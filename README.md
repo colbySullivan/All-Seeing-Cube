@@ -9,4 +9,6 @@ http://www.opengl-tutorial.org/beginners-tutorials/
 There are no further plans for this program but I plan to create more projects using OpenGL.
 
 # Demo screen
-![cubedemo](https://github.com/colbySullivan/All-Seeing-Cube/assets/88957296/003bb8ac-3c66-48ec-9a36-6277bfb5db38)
+![cubedemo](https://github.com/colbySullivan/All-Seeing-Cube/assets/88957296/e7df19d7-e051-48de-9904-3de2bed221e9)
+
+
