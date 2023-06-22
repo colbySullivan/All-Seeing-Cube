@@ -26,7 +26,7 @@ void init() {
 
 void timer(int v) {
   if (spinning) {
-    currentAngleOfRotation += 1.0;
+    currentAngleOfRotation += 5.0;
     if (currentAngleOfRotation > 360.0) {
       currentAngleOfRotation -= 360.0;
     }
@@ -126,7 +126,8 @@ void display() {
 		drawMessage();
 	}
 	else{
-		rand_message = rand() % 5;
+		//Rand in here so the message doesn't change while diplaying rolledDice
+		rand_message = rand() % 7;
 		emptyDice();
 		drawControls();
 	}
