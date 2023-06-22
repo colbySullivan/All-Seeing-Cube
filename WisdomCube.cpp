@@ -3,6 +3,8 @@
 #include <cstdlib>
 
 static bool spinning = true;
+static bool rolling = true;
+static int rand_message = 1;
 static const int FPS = 60; // This is the number of frames per second to render.
 static GLfloat currentAngleOfRotation = 0.0;
 const float window_height = 500;
@@ -14,7 +16,7 @@ void init() {
 
   // Set a deep purple background and draw in a greenish yellow.
   glClearColor(0.5, 0.0, 0.2, 1.0);
-  glColor3f(0.7, 1.0, 0.0);
+  glColor3f(0.5, 0.0, 0.0);
 
   // Set up the viewing volume: 500 x 500 x 1 window with origin lower left.
   glMatrixMode(GL_PROJECTION);
@@ -46,7 +48,7 @@ void drawBitmapText(char* text, int x, int y) {
     char* c;
 
     glLoadIdentity();
-    glColor3f(0, 0, 0);
+    glColor3f(255, 255, 255);
     glRasterPos2f(x, y);
 
     for(c = text; *c != '\0'; c++){
@@ -55,31 +57,81 @@ void drawBitmapText(char* text, int x, int y) {
 }
 
 void drawControls(){
-    char* move_message = (char*) "Use S to start rotation and SPACE to stop";
+    char* move_message = (char*) "Press SPACE to stop";
     char* exit_message = (char*) "Press ESC or Q to exit";
 
     drawBitmapText(move_message, -70, 40);
     drawBitmapText(exit_message, 10, -40);
-    glFlush();
-    glutSwapBuffers();
 }
 
-void drawTriangle(){
+char* pick_message(){
+	char* message = (char*) "Ehh try again";
+	switch(rand_message){
+		case 0:{
+			message = (char*) "Yes";
+			break;
+		}
+		case 1:{
+			message = (char*) "No";
+			break;
+		}
+		case 2:{
+			message = (char*) "Maybe";
+			break;
+		}
+		case 3:{
+			message = (char*) "You will be hungry in one hour";
+			break;
+		}
+	}
+	if(rand_message > 3){
+		char* message = (char*) "Since you failed press SPACE to spin again";
+		drawBitmapText(message, -70, 40);
+	}
+
+	return message;
+}
+
+void drawMessage(){
+	char* buffer = pick_message();
+	char* move_message = buffer;
+	glLoadIdentity();
+	glColor3f(100, 100, 100);
+	drawBitmapText(move_message, -20, 0);
+}
+
+void emptyDice(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+    glColor3f(100, 0, 0);
 	glLoadIdentity();
+	glRotatef(currentAngleOfRotation, 0.0, 5.0, 1.0);
+	glRectf(-25.0, -25.0, 25.0, 25.0); //Dimensions of object
+}
+
+void rolledDice(){
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glColor3f(0, 0, 0);
 	glRotatef(currentAngleOfRotation, 0.0, 0.0, 1.0);
 	glRectf(-25.0, -25.0, 25.0, 25.0); //Dimensions of object
 	glFlush();
 	glutSwapBuffers();
 }
-
 void display() {
-
-  glClear(GL_COLOR_BUFFER_BIT);
-  glRasterPos2f(250, 250);
-  drawTriangle();
-  drawControls();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glRasterPos2f(250, 250);
+	if(!rolling){
+		rolledDice();
+		drawMessage();
+	}
+	else{
+		rand_message = rand() % 5;
+		emptyDice();
+		drawControls();
+	}
+	glFlush();
+	glutSwapBuffers();
 }
 
 void reshape(GLint w, GLint h) {
@@ -98,12 +150,8 @@ void reshape(GLint w, GLint h) {
 
 void keyboard(unsigned char key, int x, int y){//Need unused x and y for glutKeyboardFunc
 	switch(key){
-    	case 's':{
-        	spinning = true;
-            break;
-        }
-        case ' ':{
-        	spinning = false;
+    	case ' ':{
+        	rolling = !rolling;
             break;
         }
         case 27:// Escape key
